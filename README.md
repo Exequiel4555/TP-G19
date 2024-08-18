@@ -6,9 +6,9 @@ Titulo del proyecto
 SUDOKU
 
 Integrantes
-Nahuel Stellato
-Ezequiel Villa
-Ivan Fiasche
+<br>Nahuel Stellato<\br>
+<br>Ezequiel Villa<\br>
+<br>Ivan Fiasche<\br>
 
 
 
