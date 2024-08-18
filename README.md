@@ -8,6 +8,7 @@ SUDOKU
 Integrantes
 Nahuel Stellato
 Ezequiel Villa
+Ivan Fiasche
 
 
 
