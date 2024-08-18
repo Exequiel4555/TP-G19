@@ -7,6 +7,7 @@ SUDOKU
 
 Integrantes
 Nahuel Stellato
+Ezequiel Villa
 
 
 
