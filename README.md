@@ -13,3 +13,8 @@ Integrantes
 
 
 Funcionalidades que tendrá el aplicativo, juego, etc.
+Nueva Partida
+Pistas
+Instrucciones
+Leaderboard
+
