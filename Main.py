@@ -1,22 +1,21 @@
 from termcolor import colored
 from random import randint,shuffle
 from pyfiglet import Figlet
-
-
-# ------------------------------------------------------- DiSeÑOs
+# ------------------------------------------------------- BANNER
 def print_Baner():
     f = Figlet(font="smslant")
     print(f.renderText("SUDOKU"))
 
 
-# ------------------------------------------------------- mAtRiZ
+# ------------------------------------------------------- MATRIZ
 def GenerarMatriz():
+    '''TABLERO'''
     tablero = [[0] * 9 for _ in range(9)]
     return tablero
 
 
 def MatrizxPantalla(matriz):
-    """MUESTRA MATRIZ POR PANTALLA"""
+    """MUESTRA TABLERO POR PANTALLA"""
     print("\n")
     for f in range(9):
         for c in range(9):
@@ -42,6 +41,7 @@ def resolver(tablero):
 
 
 def es_valido(tablero, fila, columna, num):
+    '''COMPLETAR TABLERO'''
     # Verificar fila
     if num in tablero[fila]:
         return False
@@ -70,10 +70,16 @@ def BorrarValores(tablero):
                 tablero[f][c] = 0
     return tablero
 
+def tablero_completo(tablero):  
+    """Verifica si el tablero está completo"""  
+    for fila in tablero:  
+        if 0 in fila:  
+            return False
 
-# -----------------------------------------------------------------# MoDo
+
+# -----------------------------------------------------------------# MODO
 def posicion_num(tablero):
-    """VERIFICAR QUE EXISTA UNA POSICION VACIA EN EL TABLERO"""
+    """VERIFICAR QUE EXISTA UNA POSICION VALIDA"""
     fila = int(input("[+] Ingresar Fila: "))
     columna = int(input("[+] Ingresar Columna:"))
     while tablero[fila][columna] != 0:
@@ -85,19 +91,18 @@ def posicion_num(tablero):
 
 def insert_num(tablero, num, fila, columna):
     """VERIFICAR QUE NO SE REPITA EN LA FILA Y COLUMNA"""
-    error = 0
     if num in tablero[fila]:
-        error += 1
-        return print(colored(f"[!] ERROR:{error}", "red"))
+        return False
+        
     for i in range(9):
         if tablero[i][columna] == num:
-            error += 1
-            return print(colored(f"[!] ERROR:{error}", "red"))
+            return False
     tablero[fila][columna] = num
     return tablero
 
 
 def check_num():
+    '''VALIDAR DEL 1 AL 9'''
     num = int(input("[+] Ingresar Numero: "))
     while num < 1 or num > 9:
         print(colored("[!] Numero invalido\n", "red"))
@@ -113,16 +118,23 @@ def Nueva_Partida():
         BorrarValores(tablero)
         MatrizxPantalla(tablero)
         num = check_num()
+        error = 0
         while True:
             fila, columna = posicion_num(tablero)
-            insert_num(tablero, num, fila, columna)
+            if not insert_num(tablero, num, fila, columna):
+                error+=1
+                print(colored(f"[!] ERROR:{error}","red"))
+                if error == 3:
+                    print(colored("[!] Limite de ERRORES","red"))
+                    break
             MatrizxPantalla(tablero)
+            tablero_completo(tablero)
             num = check_num()
-    except IndexError:
+    except (IndexError,ValueError,TypeError):
         print(colored("[!] Indice fuera de rango","red"))
 
 
-# ----------------------------------------------------------------#PaRtidA
+# ----------------------------------------------------------------#PARTIDA
 def partida():
     """ELECCION DE MODO"""
     diccionario = {1: "Nueva Partida", 2: "Instrucciones"}
@@ -142,23 +154,14 @@ def partida():
         partida()
     return diccionario
 
-    # def modo():
-    modo = {1: "Facil", 2: "Medio", 3: "Dificil"}
-
-    print(modo[1])
-    print(modo[2])
-    print(modo[3])
-    dificultad = int(input("[+] Ingresar dificultad"))
-    return dificultad
-
-
-# -----------------------------------------------------------------# MaIn
+# -----------------------------------------------------------------# PROGRAMA PRINCIPAL
 def main():
-    try:
-        print_Baner()
-        partida()
-    except (ValueError,TypeError,KeyboardInterrupt):
-        print(colored("[!] Error Inesperado","red"))
+    while True:
+        try:
+            print_Baner()
+            partida()
+        except (ValueError,TypeError,KeyboardInterrupt,KeyError):
+            print(colored("[!] Error Inesperado","red"))
 
 
 if __name__ == "__main__":
