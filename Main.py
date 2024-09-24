@@ -1,18 +1,17 @@
-from termcolor import colored
-from random import randint,shuffle
-from pyfiglet import Figlet
+from termcolor import colored #libreria de colores
+from random import randint,shuffle #librerias random
+from pyfiglet import Figlet # libreria de arte de texto ASCII
 
-# ------------------------------------------------------- DiSeÑOs
+# ------------------------------------------------------- Diseños
 def print_Baner():
     f = Figlet(font="smslant")
     print(f.renderText("SUDOKU"))
 
 
-# ------------------------------------------------------- mAtRiZ
+# ------------------------------------------------------- Matriz
 def GenerarMatriz():
     tablero = [[0] * 9 for _ in range(9)]
     return tablero
-
 
 def MatrizxPantalla(matriz):
     """MUESTRA MATRIZ POR PANTALLA"""
