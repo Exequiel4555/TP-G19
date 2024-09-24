@@ -18,9 +18,14 @@ def MatrizxPantalla(matriz):
     """MUESTRA TABLERO POR PANTALLA"""
     print("\n")
     for f in range(9):
+        if f % 3 == 0 and f != 0:
+            print("-" * 41)  # Línea horizontal entre bloques
         for c in range(9):
-            print("%3d" %matriz[f][c], end=" ")
+            if c % 3 == 0 and c != 0:
+                print("|", end=" ")  # Línea vertical entre bloques
+            print("%3d" % matriz[f][c], end=" ")
         print()
+    print(" ")
 
 
 def resolver(tablero):
@@ -80,8 +85,8 @@ def tablero_completo(tablero):
 # -----------------------------------------------------------------# MODO
 def posicion_num(tablero):
     """VERIFICAR QUE EXISTA UNA POSICION VALIDA"""
-    fila = int(input("[+] Ingresar Fila: "))
-    columna = int(input("[+] Ingresar Columna:"))
+    fila = int(input("[+] Ingresar Fila: "))-1
+    columna = int(input("[+] Ingresar Columna:"))-1
     while tablero[fila][columna] != 0:
         print(colored("\n[!] POSICION INVALIDA", "red"))
         fila = int(input("[+] Ingresar Fila: "))
@@ -137,7 +142,7 @@ def Nueva_Partida():
 # ----------------------------------------------------------------#PARTIDA
 def partida():
     """ELECCION DE MODO"""
-    diccionario = {1: "Nueva Partida", 2: "Instrucciones"}
+    diccionario = {1: "Nueva Partida", 2: "Instrucciones", 3: "Creditos"}
     for i, j in diccionario.items():
         print(i, j)
     choice = int(input("[+] Ingresar modo: "))
@@ -147,10 +152,62 @@ def partida():
     if choice == 2:
         print(
             colored(
-                "\nEl objetivo del Sudoku es llenar todas las celdas vacías en un tablero de 9x9 de manera que cada fila,\ncada columna y cada una de las nueve subcuadrículas de 3x3 contenga todos los números del 1 al 9 sin repetir ninguno.\n",
+                "\nEl objetivo de este Sudoku es en una grilla de 9x9 reemplazar los ''0'' en las grillas de 3x3 por numeros del 1 al 9,\nSin que estos se repitan entre filas y columnas de la grilla mayor\n",
                 "green",
             )
         )
+        print(
+            colored(
+                "Se le proveera al usuario una interfaz en la cual podra escribir el numero que quiere ingresar,\nEn que fila y columna quiere ingresarlo, pero hay que tener cuidado si el usuario comete un error, se le sumara a un contador de errores.\n",
+                "green",
+            )
+        )
+        print(colored("[!] ERROR: 1","red"))
+        print(
+            colored(
+                "\nAl llegar a 3 errores finalizara la partida y habra que iniciar una nueva.\nMucha suerte y a divertirse con este programa\n",
+                "green",
+            )
+        )
+        partida()
+    if choice == 3:
+        print(
+            colored(
+                "\nProgramadores y Desarrolladores",
+                "black","on_white"
+            )
+        )
+        print(
+            colored(
+                "\nEzequiel Villa",
+                "red",
+            )
+        )
+        print(
+            colored(
+                "Nahuel Stellato",
+                "green",
+            )
+        )
+        print(
+            colored(
+                "Ivan Fiasche",
+                "blue",
+            )
+        )
+        print(
+            colored(
+                "\nEntorno de Desarrollo",
+                "black","on_white",
+            )
+        )
+        print(
+            colored(
+                "Python Programming Language\nVersion 3.X.X",
+                "blue","on_yellow",
+            )
+        )
+        print("\n")
         partida()
     return diccionario
 
