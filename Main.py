@@ -1,20 +1,23 @@
 from termcolor import colored
 from random import randint,shuffle
 from pyfiglet import Figlet
+import os
+
 # ------------------------------------------------------- BANNER
-def print_Baner():
+def Banner():
     f = Figlet(font="smslant")
     print(f.renderText("SUDOKU"))
 
 
 # ------------------------------------------------------- MATRIZ
-def GenerarMatriz():
-    '''TABLERO'''
+def Tablero():
     tablero = [[0] * 9 for _ in range(9)]
+    Resolver(tablero)
+    Cambiar_valores(tablero)
     return tablero
+    
 
-
-def MatrizxPantalla(matriz):
+def Mostrar_tablero(matriz):
     """MUESTRA TABLERO POR PANTALLA"""
     print("\n")
     for f in range(9):
@@ -27,8 +30,7 @@ def MatrizxPantalla(matriz):
         print()
     print(" ")
 
-
-def resolver(tablero):
+def Resolver(tablero):
     """RESUELVE TABLERO"""
     for fila in range(9):
         for columna in range(9):
@@ -38,7 +40,7 @@ def resolver(tablero):
                 for num in numeros:
                     if es_valido(tablero, fila, columna, num):
                         tablero[fila][columna] = num
-                        if resolver(tablero):
+                        if Resolver(tablero):
                             return True
                         tablero[fila][columna] = 0
                 return False
@@ -66,15 +68,17 @@ def es_valido(tablero, fila, columna, num):
     return True
 
 
-def BorrarValores(tablero):
-    """INSERTAR VALORES 0"""
-    orden = len(tablero)
-    for f in range(orden):
-        for c in range(orden):
-            if randint(0, 1):
-                tablero[f][c] = 0
-    return tablero
-
+def Cambiar_valores(tablero, vaciar=40):  
+    """Remueve números del tablero para crear un rompecabezas con la cantidad deseada de celdas vacías."""  
+    count = 0  
+    while count < vaciar:  
+        fila = randint(0, 8)  
+        col = randint(0, 8)  
+        if tablero[fila][col] != 0:  
+            tablero[fila][col] = 0  
+            count += 1  
+    return tablero 
+#-----------------------------------------------------------------# COMPLETO
 def tablero_completo(tablero):  
     """Verifica si el tablero está completo"""  
     for fila in tablero:  
@@ -82,15 +86,15 @@ def tablero_completo(tablero):
             return False
 
 
-# -----------------------------------------------------------------# MODO
+#------------------------------------------------------------------JUEGANDO
 def posicion_num(tablero):
     """VERIFICAR QUE EXISTA UNA POSICION VALIDA"""
     fila = int(input("[+] Ingresar Fila: "))-1
     columna = int(input("[+] Ingresar Columna:"))-1
     while tablero[fila][columna] != 0:
         print(colored("\n[!] POSICION INVALIDA", "red"))
-        fila = int(input("[+] Ingresar Fila: "))
-        columna = int(input("[+] Ingresar Columna:"))
+        fila = int(input("[+] Ingresar Fila: "))-1
+        columna = int(input("[+] Ingresar Columna:"))-1
     return fila, columna
 
 
@@ -106,7 +110,7 @@ def insert_num(tablero, num, fila, columna):
     return tablero
 
 
-def check_num():
+def Seleccion_numero():
     '''VALIDAR DEL 1 AL 9'''
     num = int(input("[+] Ingresar Numero: "))
     while num < 1 or num > 9:
@@ -114,109 +118,97 @@ def check_num():
         num = int(input("[+] Ingresar Numero: "))
     return num
 
-
-def Nueva_Partida():
-    """TABLERO NUEVA PARTIDA"""
+#-----------------------------------------------------------DIFICULTAD_NORMAL
+def Dificultad_normal(tablero):
+    """PARTIDA NORMAL"""
     try:
-        tablero = GenerarMatriz()
-        resolver(tablero)
-        BorrarValores(tablero)
-        MatrizxPantalla(tablero)
-        num = check_num()
-        error = 0
+        numero = Seleccion_numero()
+        Error = 0
         while True:
-            fila, columna = posicion_num(tablero)
-            if not insert_num(tablero, num, fila, columna):
-                error+=1
-                print(colored(f"[!] ERROR:{error}","red"))
-                if error == 3:
+            Fila, Columna = posicion_num(tablero)
+            if not insert_num(tablero, numero, Fila, Columna):
+                Error+=1
+                print(colored(f"[!] ERROR:{Error}","red"))
+                if Error == 3:
                     print(colored("[!] Limite de ERRORES","red"))
                     break
-            MatrizxPantalla(tablero)
+            Mostrar_tablero(tablero)
             tablero_completo(tablero)
-            num = check_num()
+            numero = Seleccion_numero()
     except (IndexError,ValueError,TypeError):
         print(colored("[!] Indice fuera de rango","red"))
 
 
-# ----------------------------------------------------------------#PARTIDA
-def partida():
-    """ELECCION DE MODO"""
-    diccionario = {1: "Nueva Partida", 2: "Instrucciones", 3: "Creditos"}
+#--------------------------------------------------------------DIFICULTAD_EXTREMA
+def Dificultad_extremo(tablero):
+    """PARTIDA NORMAL"""
+    try: 
+        numero = Seleccion_numero()
+        while True:
+            Fila, Columna = posicion_num(tablero)
+            if not insert_num(tablero, numero, Fila, Columna):
+                lista = listar_archivos() 
+                borrar_archivos(lista)
+            Mostrar_tablero(tablero)
+            tablero_completo(tablero)
+            numero = Seleccion_numero()
+    except (IndexError,ValueError,TypeError):
+        print(colored("[!] Indice fuera de rango","red"))
+
+
+listar_archivos = lambda: list(filter(os.path.isfile, os.listdir('.'))) 
+
+def borrar_archivos(lista):
+    nombre_archivo = lista[0]    
+    if os.path.isfile(nombre_archivo):    
+        os.remove(nombre_archivo)  
+        print(colored(f"[!] El archivo '{nombre_archivo}' ha sido borrado.","red"))   
+
+#----------------------------------------------------------MOSTRAR_OPCIONES
+def Mostrar_inicio():
+    diccionario = {1: "Nueva Partida", 2: "Instrucciones"} 
     for i, j in diccionario.items():
         print(i, j)
     choice = int(input("[+] Ingresar modo: "))
-    if choice == 1:
-        Nueva_Partida()
+    return choice
 
-    if choice == 2:
-        print(
-            colored(
-                "\nEl objetivo de este Sudoku es en una grilla de 9x9 reemplazar los ''0'' en las grillas de 3x3 por numeros del 1 al 9,\nSin que estos se repitan entre filas y columnas de la grilla mayor\n",
-                "green",
-            )
-        )
-        print(
-            colored(
-                "Se le proveera al usuario una interfaz en la cual podra escribir el numero que quiere ingresar,\nEn que fila y columna quiere ingresarlo, pero hay que tener cuidado si el usuario comete un error, se le sumara a un contador de errores.\n",
-                "green",
-            )
-        )
-        print(colored("[!] ERROR: 1","red"))
-        print(
-            colored(
-                "\nAl llegar a 3 errores finalizara la partida y habra que iniciar una nueva.\nMucha suerte y a divertirse con este programa\n",
-                "green",
-            )
-        )
-        partida()
-    if choice == 3:
-        print(
-            colored(
-                "\nProgramadores y Desarrolladores",
-                "black","on_white"
-            )
-        )
-        print(
-            colored(
-                "\nEzequiel Villa",
-                "red",
-            )
-        )
-        print(
-            colored(
-                "Nahuel Stellato",
-                "green",
-            )
-        )
-        print(
-            colored(
-                "Ivan Fiasche",
-                "blue",
-            )
-        )
-        print(
-            colored(
-                "\nEntorno de Desarrollo",
-                "black","on_white",
-            )
-        )
-        print(
-            colored(
-                "Python Programming Language\nVersion 3.X.X",
-                "blue","on_yellow",
-            )
-        )
-        print("\n")
-        partida()
-    return diccionario
+def Mostrar_Modo():
+    diccionario = {1: "Normal", 2: "Extremo"} 
+    for i, j in diccionario.items():
+        print(i, j)
+    modo = int(input("[+] Ingresar modo: "))
+    return modo
 
-# -----------------------------------------------------------------# PROGRAMA PRINCIPAL
+# ----------------------------------------------------------------#INICIO_PARTIDA
+def Inicio():
+    """ELECCION DE MODO"""
+    juego_inicio = Mostrar_inicio()
+    tablero = Tablero()
+    if juego_inicio == 1:
+        print()
+        modo = Mostrar_Modo()
+        if modo == 1:
+            Mostrar_tablero(tablero)
+            Dificultad_normal(tablero)
+        if modo == 2:
+            Mostrar_tablero(tablero)
+            Dificultad_extremo(tablero)
+
+    if juego_inicio == 2:
+        print(
+            colored(
+                "\nEl objetivo del Sudoku es llenar todas las celdas vacías en un tablero de 9x9 de manera que cada fila,\ncada columna y cada una de las nueve subcuadrículas de 3x3 contenga todos los números del 1 al 9 sin repetir ninguno.\n",
+                "green",
+            )
+        )
+        Inicio()
+
+# -----------------------------------------------------------------# PROGRAMA_PRINCIPAL
 def main():
     while True:
         try:
-            print_Baner()
-            partida()
+            Banner()
+            Inicio()
         except (ValueError,TypeError,KeyboardInterrupt,KeyError):
             print(colored("[!] Error Inesperado","red"))
 
