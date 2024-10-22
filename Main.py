@@ -165,20 +165,46 @@ def borrar_archivos(lista):
         print(colored(f"[!] El archivo '{nombre_archivo}' ha sido borrado.","red"))   
 
 #----------------------------------------------------------MOSTRAR_OPCIONES
-def Mostrar_inicio():
-    diccionario = {1: "Nueva Partida", 2: "Instrucciones"} 
-    for i, j in diccionario.items():
-        print(i, j)
-    choice = int(input("[+] Ingresar modo: "))
-    return choice
+def Mostrar_inicio():  
+    """Muestra las opciones iniciales del juego y retorna la elección del usuario."""  
+    opciones = {  
+        1: "Nueva Partida",  
+        2: "Instrucciones",  
+        3: "Salir"  
+    }  
+    print("\n===== MENÚ PRINCIPAL =====")  
+    for clave, valor in opciones.items():  
+        print(f"{clave}. {valor}")  
+    while True:  
+        try:  
+            choice = int(input("[+] Ingresar opción: "))  
+            if choice in opciones:  
+                return choice  
+            else:  
+                print(colored("[!] Opción inválida. Selecciona una opción válida.", "red"))  
+        except ValueError:  
+            print(colored("[!] Entrada inválida. Por favor, ingresa un número correspondiente a las opciones.", "red"))  
 
-def Mostrar_Modo():
-    diccionario = {1: "Normal", 2: "Extremo"} 
-    for i, j in diccionario.items():
-        print(i, j)
-    modo = int(input("[+] Ingresar modo: "))
-    return modo
 
+def Mostrar_Modo():  
+    """Muestra los modos de dificultad y retorna la elección del usuario."""  
+    modos = {  
+        1: "Normal",  
+        2: "Extremo",  
+        3: "Regresar al Menú Principal"  
+    }  
+    print(colored("\n===== SELECCIONA DIFICULTAD =====","magenta"))  
+    for clave, valor in modos.items():  
+        print(f"{clave}. {valor}")  
+    while True:  
+        try:  
+            modo = int(input("[+] Ingresar modo: "))  
+            if modo in modos:  
+                return modo  
+            else:  
+                print(colored("[!] Modo inválido. Selecciona una opción válida.", "red"))  
+        except ValueError:  
+            print(colored("[!] Entrada inválida. Por favor, ingresa un número correspondiente a las opciones.", "red")) 
 # ----------------------------------------------------------------#INICIO_PARTIDA
 def Inicio():
     """ELECCION DE MODO"""
