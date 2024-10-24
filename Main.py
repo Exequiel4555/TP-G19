@@ -4,9 +4,9 @@ from pyfiglet import Figlet
 import os
 
 # ------------------------------------------------------- BANNER
-def Banner():
-    f = Figlet(font="smslant")
-    print(f.renderText("SUDOKU"))
+def Banner():  
+    f = Figlet(font="smslant")  
+    print(colored(f.renderText("SUDOKU"), "blue"))
 
 
 # ------------------------------------------------------- MATRIZ
@@ -229,15 +229,10 @@ def Inicio():
         )
         Inicio()
 
-# -----------------------------------------------------------------# PROGRAMA_PRINCIPAL
+# ------------------------------------------------------- PROGRAMA PRINCIPAL
 def main():
-    while True:
-        try:
-            Banner()
-            Inicio()
-        except (ValueError,TypeError,KeyboardInterrupt,KeyError):
-            print(colored("[!] Error Inesperado","red"))
-
+    Banner()
+    Inicio()
 
 if __name__ == "__main__":
     main()
