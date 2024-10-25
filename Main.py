@@ -78,7 +78,7 @@ def Cambiar_valores(tablero, vaciar=40):
             tablero[fila][col] = 0  
             count += 1  
     return tablero 
-#-----------------------------------------------------------------# COMPLETO
+    
 def tablero_completo(tablero):  
     """Verifica si el tablero está completo"""  
     for fila in tablero:  
@@ -86,37 +86,43 @@ def tablero_completo(tablero):
             return False
 
 
-#------------------------------------------------------------------JUEGANDO
-def posicion_num(tablero):
-    """VERIFICAR QUE EXISTA UNA POSICION VALIDA"""
-    fila = int(input("[+] Ingresar Fila: "))-1
-    columna = int(input("[+] Ingresar Columna:"))-1
-    while tablero[fila][columna] != 0:
-        print(colored("\n[!] POSICION INVALIDA", "red"))
-        fila = int(input("[+] Ingresar Fila: "))-1
-        columna = int(input("[+] Ingresar Columna:"))-1
-    return fila, columna
+# -------------------------------------------------------------- INPUTS Y VALIDACIONES  
+def posicion_num(tablero):  
+    """Solicita al usuario una posición válida donde ingresar un número."""  
+    while True:  
+        try:  
+            fila = int(input("[+] Ingresar Fila (1-9): ")) - 1  
+            columna = int(input("[+] Ingresar Columna (1-9): ")) - 1  
+            if 0 <= fila < 9 and 0 <= columna < 9:  
+                if tablero[fila][columna] == 0:  
+                    return fila, columna  
+                else:  
+                    print(colored("[!] Posición ya ocupada. Intenta de nuevo.", "red"))  
+            else:  
+                print(colored("[!] Fila o columna fuera de rango. Deben ser entre 1 y 9.", "red"))  
+        except ValueError:  
+            print(colored("[!] Entrada inválida. Por favor, ingresa números del 1 al 9.", "red"))  
 
 
-def insert_num(tablero, num, fila, columna):
-    """VERIFICAR QUE NO SE REPITA EN LA FILA Y COLUMNA"""
-    if num in tablero[fila]:
-        return False
-        
-    for i in range(9):
-        if tablero[i][columna] == num:
-            return False
-    tablero[fila][columna] = num
-    return tablero
+def insert_num(tablero, num, fila, columna):  
+    """Intenta insertar un número en el tablero en la posición dada."""  
+    if es_valido(tablero, fila, columna, num):  
+        tablero[fila][columna] = num  
+        return True  
+    return False  
 
 
-def Seleccion_numero():
-    '''VALIDAR DEL 1 AL 9'''
-    num = int(input("[+] Ingresar Numero: "))
-    while num < 1 or num > 9:
-        print(colored("[!] Numero invalido\n", "red"))
-        num = int(input("[+] Ingresar Numero: "))
-    return num
+def Seleccion_numero():  
+    """Solicita al usuario un número entre 1 y 9."""  
+    while True:  
+        try:  
+            num = int(input("[+] Ingresar Número (1-9): "))  
+            if 1 <= num <= 9:  
+                return num  
+            else:  
+                print(colored("[!] Número inválido. Debe ser entre 1 y 9.", "red"))  
+        except ValueError:  
+            print(colored("[!] Entrada inválida. Por favor, ingresa un número entre 1 y 9.", "red"))  
 
 #-----------------------------------------------------------DIFICULTAD_NORMAL
 def Dificultad_normal(tablero):
