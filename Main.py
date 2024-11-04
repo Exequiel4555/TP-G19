@@ -100,7 +100,7 @@ def es_valido(tablero, fila, columna, num):
     return True
 
 
-def Cambiar_valores(tablero, vaciar=40):  
+def Cambiar_valores(tablero, vaciar=30):  
     """Remueve números del tablero para crear un rompecabezas con la cantidad deseada de celdas vacías.
     Args:
         Tablero.
@@ -162,7 +162,7 @@ def insert_num(tablero, num, fila, columna):
         Columna.
     Returns:
        True(Si el numero ingresado es correcto).
-       False(si el numero ingresado es incorrecto).
+       False(Si el numero ingresado es incorrecto).
     """  
     if es_valido(tablero, fila, columna, num):  
         tablero[fila][columna] = num  
@@ -203,14 +203,13 @@ def Dificultad_normal(tablero):
             Fila, Columna = posicion_num(tablero)
             if not insert_num(tablero, numero, Fila, Columna):
                 error+=1
-                print(colored(f"[!] ERROR:{error}","red"))
-                if error == 3:
-                    print(colored("[!] Limite de ERRORES","red"))
-                    break
+                print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila +1}, {columna +1}).", "red"))
+                if error >= 3:
+                    print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
+                    main()
             Mostrar_tablero(tablero)
-            tablero_completo(tablero)
-    except (IndexError,ValueError,TypeError):
-        print(colored("[!] Indice fuera de rango","red"))
+    except KeyboardInterrupt:
+        print(colored("\n[!] Juego interrumpido por el usuario.", "red"))
 
 
 #--------------------------------------------------------------DIFICULTAD_EXTREMA
