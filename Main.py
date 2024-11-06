@@ -38,16 +38,20 @@ def Mostrar_tablero(matriz):
     Returns:
        None.
     """  
-    print("\n")
-    for f in range(9):
-        if f % 3 == 0 and f != 0:
-            print("-" * 41)  # Línea horizontal entre bloques
-        for c in range(9):
-            if c % 3 == 0 and c != 0:
-                print("|", end=" ")  # Línea vertical entre bloques
-            print("%3d" % matriz[f][c], end=" ")
-        print()
-    print(" ")
+    print("\n")  
+    for f in range(9):  
+        if f % 3 == 0 and f != 0:  
+            print("-" * 30)   
+        for c in range(9):  
+            if c % 3 == 0 and c != 0:  
+                print("|", end=" ")  
+            num = matriz[f][c]  
+            if num == 0:  
+                print(" . ", end="")   
+            else:  
+                print(f" {num} ", end="")  
+        print()  
+    print(" ")  
 
 def Resolver(tablero):
     """Resuelve el tablero.
@@ -60,7 +64,7 @@ def Resolver(tablero):
         for columna in range(9):
             if tablero[fila][columna] == 0:
                 numeros = list(range(1, 10))
-                shuffle(numeros)  # Randomizar los números para la variabilidad
+                shuffle(numeros) 
                 for num in numeros:
                     if es_valido(tablero, fila, columna, num):
                         tablero[fila][columna] = num
@@ -128,6 +132,7 @@ def tablero_completo(tablero):
     for fila in tablero:  
         if 0 in fila:  
             return False
+    return True
 
 
 # -------------------------------------------------------------- INPUTS Y VALIDACIONES  
@@ -203,7 +208,7 @@ def Dificultad_normal(tablero):
             Fila, Columna = posicion_num(tablero)
             if not insert_num(tablero, numero, Fila, Columna):
                 error+=1
-                print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila +1}, {columna +1}).", "red"))
+                print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({Fila +1}, {Columna +1}).", "red"))
                 if error >= 3:
                     print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
                     main()
