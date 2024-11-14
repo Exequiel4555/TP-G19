@@ -2,7 +2,7 @@ from termcolor import colored
 from random import randint,shuffle
 from pyfiglet import Figlet
 import os
-
+import re
 
 # ------------------------------------------------------- BANNER
 def Banner():
@@ -14,6 +14,19 @@ def Banner():
     """  
     f = Figlet(font="smslant")  
     print(colored(f.renderText("SUDOKU"), "blue"))
+#---------------------------------------------------------USUARIO
+def validar_usuario():  
+    """  
+    Valida si el nombre de usuario cumple con los siguientes criterios:  
+    - Entre 3 y 15 caracteres.  
+    - Solo contiene letras mayúsculas y minúsculas, y números.  
+    """
+    usuario = input("Ingrese su nombre de usuario: ")  
+    patron_usuario = r'^[a-zA-Z0-9]{3,15}$'  
+    if not re.match(patron_usuario, usuario): 
+        print(colored("[!] El nombre de usuario no es válido. Debe tener entre 3 y 15 caracteres y solo incluir letras y números.","red"))
+        usuario = input("Ingrese su nombre de usuario: ")   
+    return usuario 
 
 
 # ------------------------------------------------------- MATRIZ
@@ -104,7 +117,7 @@ def es_valido(tablero, fila, columna, num):
     return True
 
 
-def Cambiar_valores(tablero, vaciar=30):  
+def Cambiar_valores(tablero, vaciar=2):  
     """Remueve números del tablero para crear un rompecabezas con la cantidad deseada de celdas vacías.
     Args:
         Tablero.
@@ -136,26 +149,21 @@ def tablero_completo(tablero):
 
 
 # -------------------------------------------------------------- INPUTS Y VALIDACIONES  
-def posicion_num(tablero):  
-    """Solicita al usuario una posición válida donde ingresar un número.
-    Args:
-        Tablero.
-    Returns:
-       False(Es falso si la posicion ya esta ocupada).
-    """  
-    while True:  
-        try:  
-            fila = int(input("[+] Ingresar Fila (1-9): ")) - 1  
-            columna = int(input("[+] Ingresar Columna (1-9): ")) - 1  
-            if 0 <= fila < 9 and 0 <= columna < 9:  
-                if tablero[fila][columna] == 0:  
-                    return fila, columna  
-                else:  
-                    print(colored("[!] Posición ya ocupada. Intenta de nuevo.", "red"))  
+def posicion_num(tablero):   
+    while True:    
+        fila = int(input("[+] Ingresar Fila (1-9) : "))-1  
+        if fila == -2:  
+            return -1, -1  # Código especial para deshacer  
+        
+        columna = int(input("[+] Ingresar Columna (1-9): "))-1  
+
+        if 0 <= fila < 9 and 0 <= columna < 9:  
+            if tablero[fila][columna] == 0:  
+                return fila, columna  
             else:  
-                print(colored("[!] Fila o columna fuera de rango. Deben ser entre 1 y 9.", "red"))  
-        except ValueError:  
-            print(colored("[!] Entrada inválida. Por favor, ingresa números del 1 al 9.", "red"))  
+                print(colored("[!] Posición ya ocupada. Intenta de nuevo.", "red"))  
+        else:  
+            print(colored("[!] Fila o columna fuera de rango. Deben ser entre 1 y 9.", "red"))  
 
 
 def insert_num(tablero, num, fila, columna):  
@@ -191,30 +199,44 @@ def Seleccion_numero():
                 print(colored("[!] Número inválido. Debe ser entre 1 y 9.", "red"))  
         except ValueError:  
             print(colored("[!] Entrada inválida. Por favor, ingresa un número entre 1 y 9.", "red"))  
+#-----------------------------------------------------------MOVIMINETO 
+def deshacer_movimiento(historial, tablero):  
+    """Deshace el último movimiento realizado por el usuario."""  
+    if historial:  
+        ult_fila, ult_col, _ = historial.pop()  
+        tablero[ult_fila][ult_col] = 0  
+        print(colored("[+] Movimiento deshecho con éxito.", "green"))  
+    else:  
+        print(colored("[!] No hay movimientos para deshacer.", "yellow"))
 
 #-----------------------------------------------------------DIFICULTAD_NORMAL
-def Dificultad_normal(tablero):
+def Dificultad_normal(tablero,usuario):
     """PARTIDA DNORMAL.
     Args:
        Tablero
     Returns:
        None
     """  
-    try:
-        error = 0
-        while not tablero_completo(tablero):
-            Mostrar_tablero(tablero)
-            numero = Seleccion_numero()
-            Fila, Columna = posicion_num(tablero)
-            if not insert_num(tablero, numero, Fila, Columna):
-                error+=1
-                print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({Fila +1}, {Columna +1}).", "red"))
-                if error >= 3:
-                    print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
-                    main()
-            Mostrar_tablero(tablero)
-    except KeyboardInterrupt:
-        print(colored("\n[!] Juego interrumpido por el usuario.", "red"))
+    error = 0
+    historial = []
+    while not tablero_completo(tablero):
+        Mostrar_tablero(tablero)
+        numero = Seleccion_numero()
+        fila, columna = posicion_num(tablero)
+        if fila == -1 and columna == -1:  
+            deshacer_movimiento(historial, tablero)  
+            continue
+        if not insert_num(tablero, numero,fila, columna):
+            error+=1
+            print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila +1}, {columna +1}).", "red"))
+            if error >= 3:
+                print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
+                main()
+        else:  
+            # Guardar el movimiento en el historial  
+            historial.append((fila, columna, numero))
+        Mostrar_tablero(tablero)
+
 
 
 #--------------------------------------------------------------DIFICULTAD_EXTREMA
@@ -257,7 +279,7 @@ def borrar_archivos(lista):
         os.remove(nombre_archivo)  
         print(colored(f"[!] El archivo '{nombre_archivo}' ha sido borrado.","red"))
     except OSError as e:
-        print(colored(f"[!] Error al borrar el archivo." , "yellow"))
+        print(colored(f"[!] Error al borrar el archivo '{nombre_archivo}': {e}", "red"))  
     
 
 #---------------------------------------------------------- MENÚ DE OPCIONES
@@ -333,31 +355,32 @@ El objetivo del Sudoku es llenar todas las celdas vacías en un tablero de orden
 
 
 # ----------------------------------------------------------------INICIO DEL JUEGO
-def Inicio():
-    """Gestiona la eleccion inicial del usuario. 
-    Args:
-       None
-    Returns:
-       none
-    """ 
-    while True:
-        choice = Mostrar_inicio()
-        if choice == 1:
-            while True:
-                modo = Mostrar_Modo()
-                if modo == 1:
-                    tablero = Tablero()
-                    Dificultad_normal(tablero)
-                elif modo == 2:
-                    tablero = Tablero()
-                    Dificultad_extremo(tablero)
-                elif modo == 3:    
-                    main() #>Regresa al menu principal
-        elif choice == 2:
-            Mostrar_Instrucciones()
-        elif choice == 3:
-            print(colored("\n[+] ¡Gracias por jugar Sudoku! Hasta la proxima.", "cyan"))
-            break
+def Inicio():  
+    """Gestiona la elección inicial del usuario """
+    try:   
+        Continuar = True
+        while Continuar:
+            usuario = validar_usuario()  
+            choice = Mostrar_inicio()  
+            if choice == 1:  
+                while True:  
+                    modo = Mostrar_Modo()  
+                    if modo == 1:  
+                        tablero = Tablero()  
+                        Dificultad_normal(tablero,usuario)  
+                    elif modo == 2:  
+                        tablero = Tablero()   
+                        Dificultad_extremo(tablero)  
+                    elif modo == 3:  
+                        main()  # Regresar al menú principal  
+            elif choice == 2:  
+                Mostrar_Instrucciones()  
+            elif choice == 3:  
+                Continuar = False
+    except KeyboardInterrupt as e:
+        print(e)
+    finally:
+        print(colored("\n[+] ¡Gracias por jugar Sudoku! Hasta la próxima.", "cyan"))
 
 # ------------------------------------------------------- PROGRAMA PRINCIPAL
 def main():
