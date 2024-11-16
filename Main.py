@@ -175,41 +175,58 @@ def Seleccion_numero():
                 print(colored("[!] Número inválido. Debe ser entre 1 y 9.", "red"))  
         except ValueError:  
             print(colored("[!] Entrada inválida. Por favor, ingresa un número entre 1 y 9.", "red"))  
+#------------------------------------------------------------ARCHIVO
+def guardar_puntuacion(usuario, tiempo, puntos):  
+    """Guarda el nombre de usuario y el tiempo en un archivo txt."""  
+    with open('puntuaciones.txt', 'a') as archivo:  
+        archivo.write(f'Usuario: {usuario}, Tiempo: {tiempo:.2f} segundos Ptos: {puntos}\n') 
 
 #-----------------------------------------------------------DIFICULTAD_NORMAL  
-def Dificultad_normal(tablero):  
+
+def Dificultad_normal(tablero,usuario):
     """PARTIDA NORMAL.  
     Args:  
-       Tablero  
+        Tablero  
     Returns:  
-       None  
-    """ 
-    start_time = time.time() 
-    error = 0  
-    while not tablero_completo(tablero):  
-        Mostrar_tablero(tablero)  
-        numero = Seleccion_numero()  
-        fila, columna = posicion_num(tablero)  
+        None""" 
+    start_time = time.time()
+    error = 0
+    puntos = 1000  
+    juego_terminado = False  
+    
+    while not tablero_completo(tablero) and not juego_terminado:
+        Mostrar_tablero(tablero)
+        numero = Seleccion_numero()
+        fila, columna = posicion_num(tablero)
         
-        if not insert_num(tablero, numero, fila, columna):  
-            error += 1  
-            print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila + 1}, {columna + 1}).", "red"))  
-            if error >= 3:  
-                print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))  
-                main()
-    end_time = time.time()  
-    total_time = end_time - start_time   
-    Mostrar_tablero(tablero)  
-    print(colored("[+] ¡Felicidades! Has completado el Sudoku correctamente.", "green"))  
-    print(colored(f"Tiempo total jugado: {total_time:.2f} segundos", "yellow"))  
+        if not insert_num(tablero, numero, fila, columna):
+            error += 1
+            puntos -= 50  
+            print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila + 1}, {columna + 1}).", "red"))
+            if error >= 3:
+                print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
+                juego_terminado = True  
+
+   
+    if not juego_terminado:
+        end_time = time.time()
+        total_time = end_time - start_time
+        puntos -= int(total_time // 10)  
+
+        Mostrar_tablero(tablero)
+        print(colored("[+] ¡Felicidades! Has completado el Sudoku correctamente.", "green"))
+        print(colored(f"Tiempo total jugado: {total_time:.2f} segundos", "yellow"))
+        print(colored(f"Puntaje final: {max(0, puntos)} puntos", "magenta"))
+        guardar_puntuacion(usuario, total_time, puntos)
+
 #--------------------------------------------------------------DIFICULTAD_EXTREMA  
 def Dificultad_extremo(tablero):  
-    """PARTIDA DIFICULTAD EXTREMA.  
-    Args:  
-       Tablero  
-    Returns:  
-       None  
-    """  
+    #""PARTIDA DIFICULTAD EXTREMA.  
+    #Args:  
+    #  Tablero  
+    #Returns:  
+    #   None  
+      
     try:   
         while True:  
             Mostrar_tablero(tablero)  
@@ -318,14 +335,15 @@ def Inicio():
     """Gestiona la elección inicial del usuario """  
     try:   
         Continuar = True  
-        while Continuar:  
+        while Continuar:
+            usuario = input("[!] Ingresar usuario: ") 
             choice = Mostrar_inicio()  
             if choice == 1:  
                 while True:  
                     modo = Mostrar_Modo()  
                     if modo == 1:  
                         tablero = Tablero()  
-                        Dificultad_normal(tablero)  
+                        Dificultad_normal(tablero,usuario)  
                     elif modo == 2:  
                         tablero = Tablero()   
                         Dificultad_extremo(tablero)  
