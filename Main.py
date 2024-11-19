@@ -169,7 +169,7 @@ def Seleccion_numero():
     while True:  
         try:  
             num = int(input("[+] Ingresar Número (1-9): "))  
-            if 1 <= num <= 9:  
+            if 1 <= num <= 9 or num == -99:  
                 return num  
             else:  
                 print(colored("[!] Número inválido. Debe ser entre 1 y 9.", "red"))  
@@ -180,41 +180,56 @@ def guardar_puntuacion(usuario, tiempo, puntos):
     """Guarda el nombre de usuario y el tiempo en un archivo txt."""  
     with open('puntuaciones.txt', 'a') as archivo:  
         archivo.write(f'Usuario: {usuario}, Tiempo: {tiempo:.2f} segundos Ptos: {puntos}\n') 
+#------------------------------------------------------------------PISTAS
+def completar_numero(tablero):
+    """Completa automáticamente un número válido en el tablero en la primera celda vacía encontrada.
+    
+    Args:
+        tablero: La matriz 9x9 del Sudoku.
+
+    Returns:
+        bool: True si se completó un número, False si no hay celdas vacías.
+    """
+    for fila in range(9):
+        for columna in range(9):
+            if tablero[fila][columna] == 0:  
+                for num in range(1, 10):  
+                    if es_valido(tablero, fila, columna, num):
+                        tablero[fila][columna] = num
+                        print(colored(f"[+] Número {num} completado automáticamente en la posición ({fila + 1}, {columna + 1}).", "green"))
+                        return True
+    return False  
 
 #-----------------------------------------------------------DIFICULTAD_NORMAL  
-
-def Dificultad_normal(tablero,usuario):
-    """  
-    Realiza una partida de Sudoku en modo normal.  
-
-    Args:  
-        tablero: El tablero de Sudoku a completar.  
-        usuario: El nombre del usuario que juega.  
-
-    Returns:  
-        None  
-    """ 
+def Dificultad_normal(tablero, usuario):
+    """Realiza una partida de Sudoku en modo normal."""
     start_time = time.time()
     error = 0
-    puntos = 1000   
+    puntos = 1000
 
-    while not tablero_completo(tablero):
-        Mostrar_tablero(tablero)
-        numero = Seleccion_numero()
-        fila, columna = posicion_num(tablero)
-        
-        if not insert_num(tablero, numero, fila, columna):
+    while not tablero_completo(tablero):  
+        Mostrar_tablero(tablero)  
+        numero = Seleccion_numero()  
+
+        if numero == -99:  
+            if completar_numero(tablero):  
+                puntos -= 20  
+            continue
+
+        fila, columna = posicion_num(tablero)  
+
+        if not insert_num(tablero, numero, fila, columna):  
             error += 1
-            puntos -= 50  
-            print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila + 1}, {columna + 1}).", "red"))
+            puntos -= 50
+            print(colored(f"[!] ERROR: Número {numero} no válido en ({fila + 1}, {columna + 1}).", "red"))
             if error >= 3:
                 print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
                 main()  
+                return
 
-   
     end_time = time.time()
     total_time = end_time - start_time
-    puntos -= int(total_time // 10)  
+    puntos -= int(total_time // 10) 
 
     Mostrar_tablero(tablero)
     print(colored("[+] ¡Felicidades! Has completado el Sudoku correctamente.", "green"))
@@ -222,6 +237,8 @@ def Dificultad_normal(tablero,usuario):
     print(colored(f"Puntaje final: {max(0, puntos)} puntos", "magenta"))
     guardar_puntuacion(usuario, total_time, puntos)
     main()
+
+
 
 #--------------------------------------------------------------DIFICULTAD_EXTREMA  
 def Dificultad_extremo(tablero):  
@@ -353,7 +370,7 @@ def Inicio():
                             tablero = Tablero()   
                             Dificultad_extremo(tablero)  
                         elif modo == 3:  
-                            main()  # Regresar al menú principal  
+                            main()   
                 elif choice == 2:  
                     Mostrar_Instrucciones()  
                 elif choice == 3:  
