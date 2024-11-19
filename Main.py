@@ -184,17 +184,21 @@ def guardar_puntuacion(usuario, tiempo, puntos):
 #-----------------------------------------------------------DIFICULTAD_NORMAL  
 
 def Dificultad_normal(tablero,usuario):
-    """PARTIDA NORMAL.  
+    """  
+    Realiza una partida de Sudoku en modo normal.  
+
     Args:  
-        Tablero  
+        tablero: El tablero de Sudoku a completar.  
+        usuario: El nombre del usuario que juega.  
+
     Returns:  
-        None""" 
+        None  
+    """ 
     start_time = time.time()
     error = 0
-    puntos = 1000  
-    juego_terminado = False  
-    
-    while not tablero_completo(tablero) and not juego_terminado:
+    puntos = 1000   
+
+    while not tablero_completo(tablero):
         Mostrar_tablero(tablero)
         numero = Seleccion_numero()
         fila, columna = posicion_num(tablero)
@@ -205,28 +209,28 @@ def Dificultad_normal(tablero,usuario):
             print(colored(f"[!] ERROR: Número {numero} no válido en la posición ({fila + 1}, {columna + 1}).", "red"))
             if error >= 3:
                 print(colored("[!] Has alcanzado el límite de 3 errores. Juego terminado.", "red"))
-                juego_terminado = True  
+                main()  
 
    
-    if not juego_terminado:
-        end_time = time.time()
-        total_time = end_time - start_time
-        puntos -= int(total_time // 10)  
+    end_time = time.time()
+    total_time = end_time - start_time
+    puntos -= int(total_time // 10)  
 
-        Mostrar_tablero(tablero)
-        print(colored("[+] ¡Felicidades! Has completado el Sudoku correctamente.", "green"))
-        print(colored(f"Tiempo total jugado: {total_time:.2f} segundos", "yellow"))
-        print(colored(f"Puntaje final: {max(0, puntos)} puntos", "magenta"))
-        guardar_puntuacion(usuario, total_time, puntos)
+    Mostrar_tablero(tablero)
+    print(colored("[+] ¡Felicidades! Has completado el Sudoku correctamente.", "green"))
+    print(colored(f"Tiempo total jugado: {total_time:.2f} segundos", "yellow"))
+    print(colored(f"Puntaje final: {max(0, puntos)} puntos", "magenta"))
+    guardar_puntuacion(usuario, total_time, puntos)
+    main()
 
 #--------------------------------------------------------------DIFICULTAD_EXTREMA  
 def Dificultad_extremo(tablero):  
-    #""PARTIDA DIFICULTAD EXTREMA.  
-    #Args:  
-    #  Tablero  
-    #Returns:  
-    #   None  
-      
+    '''PARTIDA DIFICULTAD EXTREMA.  
+    Args:  
+      Tablero  
+    Returns:  
+       None  
+    '''
     try:   
         while True:  
             Mostrar_tablero(tablero)  
@@ -332,31 +336,32 @@ El objetivo del Sudoku es llenar todas las celdas vacías en un tablero de orden
 
 # ----------------------------------------------------------------INICIO DEL JUEGO  
 def Inicio():  
-    """Gestiona la elección inicial del usuario """  
-    try:   
-        Continuar = True  
-        while Continuar:
-            usuario = input("[!] Ingresar usuario: ") 
-            choice = Mostrar_inicio()  
-            if choice == 1:  
-                while True:  
-                    modo = Mostrar_Modo()  
-                    if modo == 1:  
-                        tablero = Tablero()  
-                        Dificultad_normal(tablero,usuario)  
-                    elif modo == 2:  
-                        tablero = Tablero()   
-                        Dificultad_extremo(tablero)  
-                    elif modo == 3:  
-                        main()  # Regresar al menú principal  
-            elif choice == 2:  
-                Mostrar_Instrucciones()  
-            elif choice == 3:  
-                Continuar = False  
-    except KeyboardInterrupt as e:  
-        print(e)  
-    finally:  
-        print(colored("\n[+] ¡Gracias por jugar Sudoku! Hasta la próxima.", "cyan"))  
+    """Gestiona la elección inicial del usuario """
+    while True:
+        try:   
+            Continuar = True  
+            while Continuar:
+                usuario = input("[!] Ingresar usuario: ") 
+                choice = Mostrar_inicio()  
+                if choice == 1:  
+                    while True:  
+                        modo = Mostrar_Modo()  
+                        if modo == 1:  
+                            tablero = Tablero()  
+                            Dificultad_normal(tablero,usuario)  
+                        elif modo == 2:  
+                            tablero = Tablero()   
+                            Dificultad_extremo(tablero)  
+                        elif modo == 3:  
+                            main()  # Regresar al menú principal  
+                elif choice == 2:  
+                    Mostrar_Instrucciones()  
+                elif choice == 3:  
+                    Continuar = False  
+        except KeyboardInterrupt as e:  
+            print(e)  
+        finally:  
+            print(colored("\n[+] ¡Gracias por jugar Sudoku! Hasta la próxima.", "cyan"))  
 
 # ------------------------------------------------------- PROGRAMA PRINCIPAL  
 def main():  
