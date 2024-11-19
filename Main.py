@@ -99,7 +99,7 @@ def es_valido(tablero, fila, columna, num):
 
     return True  
 
-def Cambiar_valores(tablero, vaciar=2):  
+def Cambiar_valores(tablero, vaciar=20):  
     """Remueve números del tablero para crear un rompecabezas con la cantidad deseada de celdas vacías.  
     Args:  
         Tablero.  
