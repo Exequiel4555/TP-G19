@@ -13,7 +13,12 @@ def Banner():
     print(colored(f.renderText("SUDOKU"), "blue"))
 # ----------------------------------------------------------USUARIO
 def validar_usuario():
-    """Valida el nombre de usuario."""
+    """  
+    Valida y retorna un nombre de usuario válido.  
+
+    Returns:  
+        str: Nombre de usuario que cumple con los criterios de validación.  
+            Debe contener entre 3 y 15 caracteres alfanuméricos."""
     usuario = input("Ingrese su nombre de usuario: ")
     patron_usuario = r"^[a-zA-Z0-9]{3,15}$"
     if not re.match(patron_usuario, usuario):
@@ -27,7 +32,13 @@ def validar_usuario():
     return usuario
 # ------------------------------------------------------- MATRIZ
 def Tablero():
-    """Genera el tablero."""
+    """  
+    Genera un nuevo tablero de Sudoku.  
+
+    Returns:  
+        list: Una matriz 9x9 que representa el tablero de Sudoku  
+              parcialmente completo y válido para jugar.  
+    """
     tablero = [[0] * 9 for _ in range(9)]
     Resolver(tablero)
     Cambiar_valores(tablero)
@@ -35,7 +46,13 @@ def Tablero():
 
 
 def Mostrar_tablero(matriz):
-    """Muestra el tablero en pantalla."""
+    """  
+    Muestra el tablero de Sudoku en la consola.  
+
+    Args:  
+        matriz (list): Una matriz 9x9 que representa el estado actual  
+                      del tablero de Sudoku.  
+    """
     print("\n")
     for f in range(9):
         if f % 3 == 0 and f != 0:
@@ -53,7 +70,15 @@ def Mostrar_tablero(matriz):
 
 
 def Resolver(tablero):
-    """Resuelve el tablero."""
+    """  
+    Resuelve el tablero de Sudoku utilizando backtracking.  
+
+    Args:  
+        tablero (list): Matriz 9x9 que representa el tablero de Sudoku.  
+
+    Returns:  
+        bool: True si se encontró una solución, False en caso contrario.  
+    """
     for fila in range(9):
         for columna in range(9):
             if tablero[fila][columna] == 0:
@@ -69,7 +94,18 @@ def Resolver(tablero):
     return True
 
 def es_valido(tablero, fila, columna, num):
-    """Verifica si el número es válido en la posición dada."""
+    """  
+    Verifica si un número es válido en una posición específica del tablero.  
+
+    Args:  
+        tablero (list): Matriz 9x9 que representa el tablero de Sudoku.  
+        fila (int): Índice de la fila (0-8).  
+        columna (int): Índice de la columna (0-8).  
+        num (int): Número a verificar (1-9).  
+
+    Returns:  
+        bool: True si el número es válido en la posición, False en caso contrario.  
+    """
     if num in tablero[fila]:
         return False
 
@@ -85,7 +121,16 @@ def es_valido(tablero, fila, columna, num):
     return True
 
 def Cambiar_valores(tablero, vaciar=2):
-    """Remueve números para crear celdas vacías."""
+    """  
+    Remueve números del tablero para crear celdas vacías.  
+
+    Args:  
+        tablero (list): Matriz 9x9 que representa el tablero de Sudoku.  
+        vaciar (int): Cantidad de números a remover. Por defecto es 2.  
+
+    Returns:  
+        list: Tablero modificado con celdas vacías.  
+    """
     count = 0
     while count < vaciar:
         fila = randint(0, 8)
@@ -156,7 +201,14 @@ def Seleccion_numero():
 
 # ------------------------------------------------------------ARCHIVO Y PUNTUACIONES
 def guardar_puntuacion(usuario, tiempo, puntos):
-    """Guarda el nombre de usuario y el tiempo en un archivo txt."""
+    """  
+    Guarda la puntuación del jugador en un archivo.  
+
+    Args:  
+        usuario (str): Nombre del jugador.  
+        tiempo (float): Tiempo empleado en segundos.  
+        puntos (int): Puntuación obtenida.  
+    """
     with open("puntuaciones.txt", "a") as archivo:
         archivo.write(f"Usuario: {usuario}, Tiempo: {tiempo:.2f} segundos Ptos: {puntos}\n")
 
@@ -229,7 +281,20 @@ def deshacer_movimiento(historial, tablero):
 
 # -----------------------------------------------------------DIFICULTAD_NORMAL
 def Dificultad_normal(tablero, usuario):
-    """Realiza una partida de Sudoku en modo normal."""
+    """  
+    Ejecuta una partida de Sudoku en modo normal.  
+
+    Args:  
+        tablero (list): Matriz 9x9 que representa el tablero de Sudoku.  
+        usuario (str): Nombre del jugador.  
+
+    Features:  
+        - Sistema de puntuación comenzando en 1000 puntos  
+        - Penalización por errores (-50 puntos)  
+        - Penalización por usar pistas (-20 puntos)  
+        - Penalización por tiempo (cada 10 segundos)  
+        - Límite de 3 errores  
+    """
     start_time = time.time()
     error = 0
     puntos = 1000
@@ -272,7 +337,16 @@ def Dificultad_normal(tablero, usuario):
     main()
 # --------------------------------------------------------------DIFICULTAD_EXTREMA
 def Dificultad_extremo(tablero):  
-    """Maneja la lógica del juego en modo Extremo con lógica específica."""  
+    """  
+    Ejecuta una partida de Sudoku en modo extremo.  
+
+    Args:  
+        tablero (list): Matriz 9x9 que representa el tablero de Sudoku.  
+
+    Warning:  
+        En este modo, cada error resulta en la eliminación de un archivo  
+        del directorio actual.  
+    """  
     while not tablero_completo(tablero):  
         Mostrar_tablero(tablero)  
         numero = Seleccion_numero()  
@@ -300,7 +374,16 @@ def borrar_archivos(lista):
 
 # ---------------------------------------------------------- MENÚ DE OPCIONES
 def Mostrar_inicio():
-    """Muestra las opciones iniciales del juego y retorna la elección del usuario."""
+    """  
+    Muestra y gestiona el menú principal del juego.  
+
+    Returns:  
+        int: Opción seleccionada por el usuario:  
+            1: Nueva Partida  
+            2: Instrucciones  
+            3: Leaderboard  
+            4: Salir  
+    """
     opciones = {1: "Nueva Partida", 2: "Instrucciones", 3: "Leaderboard", 4: "Salir"}
     print("\n===== MENÚ PRINCIPAL =====")
     for clave, valor in opciones.items():
