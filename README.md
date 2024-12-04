@@ -30,3 +30,6 @@ Instrucciones: Dentro del menú principal , estará la opción de ingresar a vis
 
 Leaderboard: Dentro del menú principal, estará la opción de ingresar a visualizar unas tablas de clasificación, las cuales guardaran los 10 puntajes mas altas que se sacaron en el juego.
 
+<br>![Imagen de WhatsApp 2024-12-04 a las 18 58 20_1ead7db0](https://github.com/user-attachments/assets/51494c6f-5ce0-4b44-8640-f078ebf69f1f)
+
+
